@@ -1,3 +1,3 @@
 module.exports = {
-  IP : 'rhythm.netlify.com'
+  IP : '172.16.82.61'
 }
