@@ -19,10 +19,14 @@ export default {
       socketId: ''
     }
   },
+  mounted(){
+
+  },
   methods: {
     confirm() {
       let name = this.userName,
         id = this.socketId;
+      console.log(id);
       if (!!name && !!id) {
         localStorage.setItem('userInfo', JSON.stringify({
           name: name,

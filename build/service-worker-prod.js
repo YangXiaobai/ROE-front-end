@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  const applicationServerPublicKey = 'BCn0Se9h3N3NrEVBi0p8CW0AXbMSRBlWhhZkIB5qJsvOXa7ltzbj0MXqSGYq80pa8a5LOdofcYXd-s5abvq1_q0';
+
   // Check to make sure service workers are supported in the current browser,
   // and that the current page is accessed from a secure origin. Using a
   // service worker from an insecure origin will trigger JS console errors.
@@ -14,42 +16,18 @@
     );
 
   window.addEventListener('load', function() {
-      if ('serviceWorker' in navigator &&
-          (window.location.protocol === 'https:' || isLocalhost)) {
-        navigator.serviceWorker.register('service-worker.js')
-        .then(function(registration) {
-          // updatefound is fired if service-worker.js changes.
-          registration.onupdatefound = function() {
-            // updatefound is also fired the very first time the SW is installed,
-            // and there's no need to prompt for a reload at that point.
-            // So check here to see if the page is already controlled,
-            // i.e. whether there's an existing service worker.
-            if (navigator.serviceWorker.controller) {
-              // The updatefound event implies that registration.installing is set
-              var installingWorker = registration.installing;
-
-              installingWorker.onstatechange = function() {
-                switch (installingWorker.state) {
-                  case 'installed':
-                    // At this point, the old content will have been purged and the
-                    // fresh content will have been added to the cache.
-                    // It's the perfect time to display a "New content is
-                    // available; please refresh." message in the page's interface.
-                    break;
-
-                  case 'redundant':
-                    throw new Error('The installing ' +
-                                    'service worker became redundant.');
-
-                  default:
-                    // Ignore
-                }
-              };
-            }
-          };
-        }).catch(function(e) {
-          console.error('Error during service worker registration:', e);
-        });
+      if (navigator.serviceWorker) {
+      console.log('Service Worker is supported');
+      navigator.serviceWorker.register('service-worker.js')
+      .then(function(registration) {
+        console.log('Service Worker is registered', registration);
+      })
+      .catch(function(error) {
+        console.error('Service Worker Error', error);
+      });
+      } else {
+        console.warn('Push messaging is not supported');
       }
   });
+
 })();

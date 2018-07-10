@@ -103,6 +103,12 @@ const webpackConfig = merge(baseWebpackConfig, {
       cacheId: 'rythem-of-estimation',
       filename: 'service-worker.js',
       staticFileGlobs: ['dist/**/*.{js,html,css}'],
+      runtimeCaching: [
+            {
+              urlPattern: /^http:\/\/localhost\.cloudinary\.com\//,
+              handler: 'cacheFirst'
+            }
+      ],
       minify: true,
       stripPrefix: 'dist/'
     })
