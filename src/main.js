@@ -9,7 +9,7 @@ import axios from 'axios'
 import qs from 'qs'
 import socket from 'vue-socket.io';
 
-let _ip = 'http://' + IP.IP;
+let _ip = 'https://' + IP.IP;
 
 Vue.use(socket, _ip + ':3000');
 

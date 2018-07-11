@@ -1,3 +1,3 @@
 module.exports = {
-  IP : '10.74.77.72'
+  IP : 'salty-sands-89303.herokuapp.com'
 }
