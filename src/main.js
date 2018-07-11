@@ -11,7 +11,7 @@ import socket from 'vue-socket.io';
 
 let _ip = 'https://' + IP.IP;
 
-Vue.use(socket, _ip + ':3000');
+// Vue.use(socket, _ip + ':3000');
 
 Vue.config.productionTip = false
 

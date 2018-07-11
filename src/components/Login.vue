@@ -27,7 +27,7 @@ export default {
       let name = this.userName,
         id = this.socketId;
       console.log(id);
-      if (!!name && !!id) {
+      if (!!name) {
         localStorage.setItem('userInfo', JSON.stringify({
           name: name,
           id: id
