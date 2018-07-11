@@ -18,7 +18,7 @@ Vue.config.productionTip = false
 Vue.prototype.$qs = qs
 
 // axios.defaults.withCredentials = true
-axios.defaults.baseURL = _ip + ':2000';
+axios.defaults.baseURL = _ip + ':5000';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 
 Vue.prototype.$axios = axios
