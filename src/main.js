@@ -7,9 +7,13 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import qs from 'qs'
-import socket from 'vue-socket.io';
+import VueSocketio from 'vue-socket.io-extended';
+// import socket from 'vue-socket.io';
+import io from 'socket.io-client';
 
-let _ip = 'https://' + IP.IP;
+var _ip = 'http://' + IP.IP;
+
+Vue.use(VueSocketio, io(_ip + ':3000'));
 
 // Vue.use(socket, _ip + ':3000');
 
@@ -18,7 +22,7 @@ Vue.config.productionTip = false
 Vue.prototype.$qs = qs
 
 // axios.defaults.withCredentials = true
-axios.defaults.baseURL = _ip + ':17270';
+axios.defaults.baseURL = _ip + ':2000';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 
 Vue.prototype.$axios = axios

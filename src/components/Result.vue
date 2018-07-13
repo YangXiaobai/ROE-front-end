@@ -1,5 +1,6 @@
 <template>
   <div class="result">
+    <div v-if="isObserver" @click="exit" id="exit"></div>
     <p id="sentence">System calculation</p>
     <p id="sysScore" v-text="sysScore"></p>
     <div id="notesBox">
@@ -11,26 +12,26 @@
       </div>
       <div v-else class="placeholder" v-for="(v,k,i) in resultList" :class="{secondLine: i>3}" :style="{left:v.left}"><img src="../assets/note_half.png"></div>
     </div>
-    <audio preload="auto" id="audioC">
+    <audio preload="auto" id="audio1">
       <source src="../assets/notes/C.mp3" type="audio/mp3" />
     </audio>
-    <audio preload="auto" id="audioD">
+    <audio preload="auto" id="audio2">
       <source src="../assets/notes/D.mp3" type="audio/mp3" />
     </audio>
-    <audio preload="auto" id="audioE">
+    <audio preload="auto" id="audio3">
       <source src="../assets/notes/E.mp3" type="audio/mp3" />
     </audio>
-    <audio preload="auto" id="audioF">
+    <audio preload="auto" id="audio4">
       <source src="../assets/notes/F.mp3" type="audio/mp3" />
     </audio>
-    <audio preload="auto" id="audioG">
+    <audio preload="auto" id="audio5">
       <source src="../assets/notes/G.mp3" type="audio/mp3" />
     </audio>
-    <audio preload="auto" id="audioA">
+    <audio preload="auto" id="audio6">
       <source src="../assets/notes/A.mp3" type="audio/mp3" />
     </audio>
-    <button @click="reset" id="reset">reset</button>
-    <div id="play" @click="play"></div>
+    <button v-if="!isObserver&&isAll" @click="reset" id="reset">reset</button>
+    <div v-if="isAll" id="play" @click="play"></div>
   </div>
 </template>
 <script>
@@ -50,7 +51,8 @@ export default {
       },
       currentPlaying: 999,
       sysScore: '-',
-      isAll: 0
+      isAll: 0,
+      isObserver: false
     }
   },
   mounted() {
@@ -58,11 +60,12 @@ export default {
     let userInfo = localStorage.getItem('userInfo');
     if (userInfo) {
       this.userInfo = JSON.parse(userInfo);
+      this.isObserver = this.userInfo.name ? false : true;
     } else {
       this.$router.push({ path: '/' })
     }
     let results = localStorage.getItem('results');
-    if (results) {
+    if (results && !this.isObserver) {
       results = JSON.parse(results);
       this.calcResult(results.userList);
       if (results.isAll) {
@@ -83,12 +86,6 @@ export default {
     },
     play() {
       let that = this;
-      let audio1 = document.querySelector('#audioC');
-      let audio2 = document.querySelector('#audioD');
-      let audio3 = document.querySelector('#audioE');
-      let audio4 = document.querySelector('#audioF');
-      let audio5 = document.querySelector('#audioG');
-      let audio6 = document.querySelector('#audioA');
       let results = this.resultList;
       let scoreList = [];
       for (let i in results) {
@@ -97,37 +94,63 @@ export default {
       let count = 0,
         length = scoreList.length,
         num = 1;
+      let audio = document.querySelector("#audio1");
       let int = setInterval(() => {
-        eval('audio' + num + '.pause();' + 'audio' + num + '.currentTime = 0');
+        audio.pause();
+        audio.currentTime = 0;
         num = scoreList[count];
         that.currentPlaying = count;
-        eval('audio' + num + '.play()');
+        eval('audio = document.querySelector("#audio' + num + '")');
+        audio.play();
         count++;
         if (count == length) {
           clearInterval(int);
-          var to = setTimeout(() => {
-            this.currentPlaying = 999;
-          }, 400);
+          // var to = setTimeout(() => {
+          //   this.currentPlaying = 999;
+          // }, 500);
         }
-      }, 400);
+      }, 500);
     },
     calcResult(results) {
       let that = this;
       let percentage = 0;
+      console.log(results);
       for (let i in results) {
         let res = results[i];
-        res.bottom = ((that.matches[res.score] * 12) + 10) + 'px';
-        res.left = percentage + '%';
-        percentage += 25;
-        if (percentage >= 100) percentage -= 100;
+        if (res != -1) {
+          res.bottom = ((that.matches[res.score] * 12) + 10) + 'px';
+          res.left = percentage + '%';
+          percentage += 25;
+          if (percentage >= 100) percentage -= 100;
+        }
       }
       this.resultList = results;
+    },
+    exit() {
+      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+      this.$router.push({ path: '/' })
     }
   },
   sockets: {
     connect: function() {
-      this.userInfo.id = this.$socket.id;
-      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+      let that = this;
+      let id = this.$socket.id;
+      if (this.isObserver) {
+        that.userInfo.id = id;
+        localStorage.setItem('userInfo', JSON.stringify(that.userInfo));
+      } else {
+        this.$axios.post('/voter', that.$qs.stringify({
+            id: id,
+          }))
+          .then(function(res) {
+            console.log(res);
+            that.userInfo.id = id;
+            localStorage.setItem('userInfo', JSON.stringify(that.userInfo));
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      }
     },
     list: function(list) {
       let results = JSON.parse(list);
@@ -139,7 +162,11 @@ export default {
     },
     reset: function(res) {
       localStorage.removeItem('results');
-      this.$router.push({ path: '/options' });
+      this.resultList = {};
+      this.sysScore = '-';
+      if (!this.isObserver) {
+        this.$router.push({ path: '/options' });
+      }
     }
   }
 }
@@ -151,7 +178,7 @@ export default {
   text-align: center;
   font-size: 1rem;
   font-weight: bold;
-  margin-top: 80px;
+  margin-top: 100px;
 }
 
 #sysScore {
@@ -228,7 +255,7 @@ export default {
 }
 
 .note img.beats {
-  animation: beats .4s;
+  animation: beats .5s;
 }
 
 .note span {
@@ -237,6 +264,16 @@ export default {
   display: block;
   font-size: 1rem;
   left: calc(50% - 10px);
+}
+
+#exit {
+  height: 26px;
+  width: 26px;
+  background: url('../assets/back.png') no-repeat center;
+  background-size: cover;
+  position: absolute;
+  right: 6vw;
+  top: 40px;
 }
 
 </style>

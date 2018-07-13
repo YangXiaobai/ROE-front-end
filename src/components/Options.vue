@@ -28,13 +28,26 @@ export default {
       this.$router.push({ path: '/check?' + score });
     },
     exit() {
+      delete this.userInfo.name;
+      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
       this.$router.push({ path: '/' })
     }
   },
   sockets: {
     connect: function() {
-      this.userInfo.id = this.$socket.id;
-      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+      let that = this;
+      let id = this.$socket.id;
+      this.$axios.post('/voter', that.$qs.stringify({
+          id: id,
+        }))
+        .then(function(res) {
+          console.log(res);
+          that.userInfo.id = id;
+          localStorage.setItem('userInfo', JSON.stringify(that.userInfo));
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   }
 }
@@ -49,14 +62,13 @@ export default {
   margin: 0 0 60px 84vw;
 }
 
-.score{
+.score {
   color: #ffffff;
   height: 80px;
   line-height: 80px;
-  width: 20%;
-  background-color: #7f55e9;
+  width: 25%;
   float: left;
-  margin: 10% 5% 0 5%;
+  margin: 10% 0 0 6%;
   text-align: center;
   font-size: 1.5rem;
 }

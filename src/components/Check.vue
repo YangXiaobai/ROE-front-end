@@ -99,8 +99,19 @@ export default {
   },
   sockets: {
     connect: function() {
-      this.userInfo.id = this.$socket.id;
-      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+      let that = this;
+      let id = this.$socket.id;
+      this.$axios.post('/voter', that.$qs.stringify({
+          id: id,
+        }))
+        .then(function(res) {
+          console.log(res);
+          that.userInfo.id = id;
+          localStorage.setItem('userInfo', JSON.stringify(that.userInfo));
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     list: function(list) {
       localStorage.setItem('results', JSON.stringify(list));

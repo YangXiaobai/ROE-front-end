@@ -1,10 +1,10 @@
 {
-  "name": "rythem-of-estimation",
-  "short_name": "roe",
+  "name": "Estimation",
+  "short_name": "Estimation",
   "icons": [
     {
-      "src": "logo.png",
-      "sizes": "192x192",
+      "src": "icon.png",
+      "sizes": "120x120",
       "type": "image/png"
     }
   ],

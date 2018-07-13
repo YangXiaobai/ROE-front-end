@@ -35,11 +35,11 @@ module.exports = {
         loader: 'vue-loader',
         options: vueLoaderConfig
       },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
-      },
+      // {
+      //   test: /\.js$/,
+      //   loader: 'babel-loader',
+      //   include: [resolve('src'), resolve('test')]
+      // },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
@@ -67,7 +67,17 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader'
+        include: [
+          path.resolve(__dirname, 'node_modules/webpack-dev-server'),
+          path.resolve(__dirname, 'node_modules/socket.io-client'),
+          path.resolve(__dirname, 'node_modules/socket.io-parser')
+        ],
+        loader: 'babel-loader',
+        query: {
+          presets: [
+            'es2015'
+          ]
+        }
       }
     ]
   }

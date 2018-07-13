@@ -46,6 +46,7 @@ input[type="text"] {
   color: #ebe8f8;
   font-size: 1.4rem;
   text-align: center;
+  -webkit-user-select: text;
 }
 
 input[type="text"]:focus {
@@ -73,7 +74,7 @@ button:focus {
   margin: 0 auto;
   height: 50px;
   background: url('./assets/lines.png') no-repeat center;
-  background-size: cover;
+  background-size: auto 100%;
 }
 
 @keyframes beats {
